@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASL Landmark Detection</title>
+    <style>
+        :root {
+            --primary: #1b4332;
+            --secondary: #2d6a4f;
+            --accent: #40916c;
+            --light-accent: #52b788;
+            --highlight: #74c69d;
+            --background: #081c15;
+            --card: #0d2818;
+            --text: #d8f3dc;
+            --border-radius: 16px;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #081c15 0%, #1b4332 50%, #092215 100%);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 40px;
+            background: linear-gradient(135deg, #0d2818 0%, #14342a 100%);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid #2d6a4f;
+        }
+
+        header {
+            margin-bottom: 35px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #74c69d 0%, #95d5b2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--light-accent);
+            margin-bottom: 25px;
+        }
+
+        .video-container {
+            background-color: rgba(13, 40, 24, 0.8);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            border: 2px solid var(--accent);
+        }
+
+        .video-feed {
+            width: 100%;
+            max-width: 640px;
+            height: auto;
+            border-radius: 12px;
+            border: 3px solid var(--highlight);
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-top: 35px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
+            color: white;
+            border: 1px solid #52b788;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);
+            color: white;
+            border: 1px solid #40916c;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25), 0 0 10px rgba(82, 183, 136, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-icon {
+            margin-right: 12px;
+            font-size: 1.4rem;
+        }
+
+        .mode-indicator {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.1rem;
+            color: var(--highlight);
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--accent);
+            border-top: 1px solid #2d6a4f;
+            padding-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .container {
+                padding: 25px;
+            }
+
+            .video-feed {
+                max-width: 100%;
+            }
+
+            .btn {
+                padding: 14px 24px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <header>
+            <h1>ASL Landmark Detection</h1>
+            <p class="subtitle">Translate American Sign Language in real-time</p>
+        </header>
+
+        <div class="video-container">
+            <img src="{{ url_for('video_feed') }}" class="video-feed" alt="ASL Video Feed">
+
+            <div class="controls">
+                <form action="/speak">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-icon">🔊</span>
+                        Speak Sentence
+                    </button>
+                </form>
+
+                <form action="/clear">
+                    <button type="submit" class="btn btn-secondary">
+                        <span class="btn-icon">🗑️</span>
+                        Clear Sentence
+                    </button>
+                </form>
+
+                <a href="{{ url_for('switch_mode', mode='letter') }}">
+                    <button class="btn btn-primary">
+                        <span class="btn-icon">🔤</span>
+                        Switch to Letter Mode
+                    </button>
+                </a>
+
+                <a href="{{ url_for('switch_mode', mode='phrase') }}">
+                    <button class="btn btn-secondary">
+                        <span class="btn-icon">🗯️</span>
+                        Switch to Phrase Mode
+                    </button>
+                </a>
+            </div>
+
+            <div class="mode-indicator">
+                Current Mode: <strong>{{ current_mode|capitalize }}</strong>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2025 ASL Landmark Detection System</p>
+        </footer>
+    </div>
+</body>
+</html>

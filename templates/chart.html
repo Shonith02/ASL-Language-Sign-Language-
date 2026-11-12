@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASL Sign Chart - Interactive Guide</title>
+    <style>
+        :root {
+            --primary: #1b4332;
+            --secondary: #2d6a4f;
+            --accent: #40916c;
+            --light-accent: #52b788;
+            --highlight: #74c69d;
+            --background: #081c15;
+            --card: #0d2818;
+            --text: #d8f3dc;
+            --border-radius: 16px;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #081c15 0%, #1b4332 50%, #092215 100%);
+            color: var(--text);
+            text-align: center;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px;
+            background: linear-gradient(135deg, #0d2818 0%, #14342a 100%);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid #2d6a4f;
+        }
+
+        h2 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #74c69d 0%, #95d5b2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--light-accent);
+            margin-bottom: 30px;
+        }
+
+        .chart-section {
+            position: relative;
+            margin-bottom: 40px;
+        }
+        
+        .chart-description {
+            max-width: 800px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+            font-size: 1.05rem;
+        }
+
+        .chart-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 3px solid var(--accent);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .chart-img:hover {
+            transform: scale(1.01);
+        }
+
+        .zoom-btn {
+            background: rgba(27, 67, 50, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .zoom-btn:hover {
+            background: var(--accent);
+            transform: scale(1.1);
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: rgba(27, 67, 50, 0.5);
+            color: var(--text);
+            border: 1px solid var(--accent);
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
+            border-color: var(--highlight);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: rgba(45, 106, 79, 0.7);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .sign-card {
+            background: rgba(27, 67, 50, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--accent);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .sign-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--highlight);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .sign-letter {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--highlight);
+            margin-bottom: 10px;
+        }
+
+        .sign-img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 2px solid var(--accent);
+        }
+
+        .tips-section {
+            background: rgba(27, 67, 50, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: left;
+            border-left: 4px solid var(--highlight);
+        }
+
+        .tips-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--highlight);
+        }
+
+        .tips-list {
+            list-style-position: inside;
+            padding-left: 10px;
+        }
+
+        .tips-list li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .download-section {
+            margin: 30px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(45, 106, 79, 0.3) 0%, rgba(64, 145, 108, 0.3) 100%);
+            border-radius: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .download-text {
+            flex: 1;
+            min-width: 300px;
+            text-align: left;
+        }
+
+        .download-title {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--highlight);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
+            color: white;
+            border: 1px solid #52b788;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25), 0 0 10px rgba(82, 183, 136, 0.3);
+        }
+        
+        .btn-icon {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .back-btn {
+            margin-top: 20px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #0d2818 0%, #14342a 100%);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid #2d6a4f;
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto;
+            position: relative;
+        }
+        
+        .modal-close {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 1.8rem;
+            color: var(--light-accent);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            color: var(--highlight);
+        }
+        
+        .modal-img {
+            max-width: 100%;
+            max-height: 80vh;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        footer {
+            margin-top: 30px;
+            font-size: 0.95rem;
+            color: var(--accent);
+            border-top: 1px solid #2d6a4f;
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .footer-left {
+            text-align: left;
+        }
+        
+        .footer-right {
+            text-align: right;
+        }
+        
+        @media (max-width: 768px) {
+            h2 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 25px;
+            }
+            
+            .card-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .download-section {
+                text-align: center;
+            }
+            
+            .download-text {
+                text-align: center;
+            }
+            
+            .btn-group {
+                justify-content: center;
+            }
+            
+            footer {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-left, .footer-right {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <h2>ASL Sign Language Chart</h2>
+        <p class="subtitle">Interactive Guide to American Sign Language</p>
+        
+        <p class="chart-description">American Sign Language (ASL) is a complete, natural language that has the same linguistic properties as spoken languages. ASL is expressed by movements of the hands and face. Explore our comprehensive guide to learn the basics of ASL and improve your signing skills.</p>
+        
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="full-chart">Full Chart</button>
+            <button class="tab-btn" data-tab="alphabet">Alphabet</button>
+            <button class="tab-btn" data-tab="numbers">Numbers</button>
+            <button class="tab-btn" data-tab="common-phrases">Common Phrases</button>
+        </div>
+        
+        <div class="tab-content active" id="full-chart">
+            <div class="chart-section">
+                <img src="{{ url_for('static', filename='chart/asl_chart.jpg') }}" alt="ASL Chart" class="chart-img" id="full-chart-img">
+                <button class="zoom-btn" onclick="openModal('full-chart-img')">
+                    🔍
+                </button>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="alphabet">
+            <div class="card-grid">
+                <!-- Example cards for A-F, you'd generate all 26 letters -->
+                <div class="sign-card" onclick="openModal('letter-a')">
+                    <div class="sign-letter">A</div>
+                    <img src="{{ url_for('static', filename='ASL_A.jpg') }}" alt="ASL Letter A" class="sign-img" id="letter-a">
+                    <p>Closed fist with thumb along the side</p>
+                </div>
+                <div class="sign-card" onclick="openModal('letter-b')">
+                    <div class="sign-letter">B</div>
+                    <img src="{{ url_for('static', filename='ASL_B.jpg') }}" alt="ASL Letter B" class="sign-img" id="letter-b">
+                    <p>Open palm with fingers together</p>
+                </div>
+                <div class="sign-card" onclick="openModal('letter-c')">
+                    <div class="sign-letter">C</div>
+                    <img src="{{ url_for('static', filename='ASL_C.jpg') }}" alt="ASL Letter C" class="sign-img" id="letter-c">
+                    <p>Curved hand in a C-shape</p>
+                </div>
+                <div class="sign-card" onclick="openModal('letter-d')">
+                    <div class="sign-letter">D</div>
+                    <img src="{{ url_for('static', filename='ASL_D.jpg') }}" alt="ASL Letter D" class="sign-img" id="letter-d">
+                    <p>Index finger pointed up, rest curled</p>
+                </div>
+                <div class="sign-card" onclick="openModal('letter-e')">
+                    <div class="sign-letter">E</div>
+                    <img src="{{ url_for('static', filename='ASL_E.jpg') }}" alt="ASL Letter E" class="sign-img" id="letter-e">
+                    <p>Fingertips curled into palm</p>
+                </div>
+                <div class="sign-card" onclick="openModal('letter-f')">
+                    <div class="sign-letter">F</div>
+                    <img src="{{ url_for('static', filename='ASL_F.jpg') }}" alt="ASL Letter F" class="sign-img" id="letter-f">
+                    <p>Index finger and thumb form circle</p>
+                </div>
+                <!-- Add more alphabet cards here -->
+            </div>
+        </div>
+        
+        <div class="tab-content" id="numbers">
+            <div class="card-grid">
+                <!-- Example cards for numbers 0-5, you'd generate all 10 numbers -->
+                <div class="sign-card" onclick="openModal('number-1')">
+                    <div class="sign-letter">1</div>
+                    <img src="{{ url_for('static', filename='ASL_1.jpg') }}" alt="ASL Number 0" class="sign-img" id="number-0">
+                    <p>Closed hand with fingers forming an O</p>
+                </div>
+                <div class="sign-card" onclick="openModal('number-2')">
+                    <div class="sign-letter">2</div>
+                    <img src="{{ url_for('static', filename='ASL_2.jpg') }}" alt="ASL Number 1" class="sign-img" id="number-1">
+                    <p>Index finger pointing up</p>
+                </div>
+                <div class="sign-card" onclick="openModal('number-3')">
+                    <div class="sign-letter">3</div>
+                    <img src="{{ url_for('static', filename='ASL_3.jpg') }}" alt="ASL Number 2" class="sign-img" id="number-2">
+                    <p>Index and middle fingers extended</p>
+                </div>
+                <div class="sign-card" onclick="openModal('number-4')">
+                    <div class="sign-letter">4</div>
+                    <img src="{{ url_for('static', filename='ASL_4.jpg') }}" alt="ASL Number 3" class="sign-img" id="number-3">
+                    <p>First three fingers extended</p>
+                </div>
+                <div class="sign-card" onclick="openModal('number-5')">
+                    <div class="sign-letter">5</div>
+                    <img src="{{ url_for('static', filename='ASL_5.jpg') }}" alt="ASL Number 4" class="sign-img" id="number-4">
+                    <p>Four fingers extended, thumb tucked</p>
+                </div>
+                <div class="sign-card" onclick="openModal('number-6')">
+                    <div class="sign-letter">6</div>
+                    <img src="{{ url_for('static', filename='ASL_6.jpg') }}" alt="ASL Number 5" class="sign-img" id="number-5">
+                    <p>All five fingers extended</p>
+                </div>
+                <!-- Add more number cards here -->
+            </div>
+        </div>
+        
+        <div class="tab-content" id="common-phrases">
+            <div class="card-grid">
+                <!-- Example cards for common phrases -->
+                <div class="sign-card" onclick="openModal('phrase-hello')">
+                    <div class="sign-letter">Hello</div>
+                    <img src="/api/placeholder/150/150" alt="ASL Hello" class="sign-img" id="phrase-hello">
+                    <p>Flat hand near forehead, move outward</p>
+                </div>
+                <div class="sign-card" onclick="openModal('phrase-thank-you')">
+                    <div class="sign-letter">Thank You</div>
+                    <img src="/api/placeholder/150/150" alt="ASL Thank You" class="sign-img" id="phrase-thank-you">
+                    <p>Hand starts at chin, moves forward</p>
+                </div>
+                <div class="sign-card" onclick="openModal('phrase-please')">
+                    <div class="sign-letter">Please</div>
+                    <img src="/api/placeholder/150/150" alt="ASL Please" class="sign-img" id="phrase-please">
+                    <p>Circular motion on chest</p>
+                </div>
+                <div class="sign-card" onclick="openModal('phrase-sorry')">
+                    <div class="sign-letter">Sorry</div>
+                    <img src="/api/placeholder/150/150" alt="ASL Sorry" class="sign-img" id="phrase-sorry">
+                    <p>Fist circular motion over chest</p>
+                </div>
+                <div class="sign-card" onclick="openModal('phrase-good')">
+                    <div class="sign-letter">Good</div>
+                    <img src="/api/placeholder/150/150" alt="ASL Good" class="sign-img" id="phrase-good">
+                    <p>Hand flat to mouth, moves down</p>
+                </div>
+                <div class="sign-card" onclick="openModal('phrase-bad')">
+                    <div class="sign-letter">Bad</div>
+                    <img src="/api/placeholder/150/150" alt="ASL Bad" class="sign-img" id="phrase-bad">
+                    <p>Hand flat to mouth, moves out</p>
+                </div>
+                <!-- Add more phrase cards here -->
+            </div>
+        </div>
+        
+        <div class="tips-section">
+            <h3 class="tips-title">Tips for Learning ASL</h3>
+            <ul class="tips-list">
+                <li>Practice consistently - even 10 minutes daily makes a difference</li>
+                <li>Focus on hand positioning and orientation for accurate signs</li>
+                <li>Don't forget facial expressions - they're a crucial part of ASL grammar</li>
+                <li>Connect with the deaf community to improve your fluency</li>
+                <li>Use our Practice Mode to receive real-time feedback on your signing</li>
+            </ul>
+        </div>
+        
+        <div class="download-section">
+            <div class="download-text">
+                <h3 class="download-title">Take ASL Learning Resources with You</h3>
+                <p>Download our printable charts and guides to continue learning offline.</p>
+            </div>
+            <div class="btn-group">
+                <a href="#" class="btn">
+                    <span class="btn-icon">📄</span>
+                    PDF Chart
+                </a>
+                <a href="#" class="btn">
+                    <span class="btn-icon">📱</span>
+                    Mobile App
+                </a>
+            </div>
+        </div>
+        
+        <a href="/home">
+            <button class="btn back-btn">
+                <span class="btn-icon">⬅</span>
+                Back to Home
+            </button>
+        </a>
+        
+        <footer>
+            <div class="footer-left">
+                <p>© 2025 ASL Detection System</p>
+                <p>Breaking barriers through technology</p>
+            </div>
+            <div class="footer-right">
+                <p>Need help? <a href="/contact" style="color: var(--highlight);">Contact Support</a></p>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Modal for zoomed images -->
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">×</span>
+            <img id="modalImg" src="" class="modal-img">
+        </div>
+    </div>
+    
+    <script>
+        // Tab functionality
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons and contents
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to current button
+                btn.classList.add('active');
+                
+                // Show corresponding content
+                const tabId = btn.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Modal functionality
+        function openModal(imgId) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImg');
+            const img = document.getElementById(imgId);
+            
+            modal.style.display = 'flex';
+            modalImg.src = img.src;
+        }
+        
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside the image
+        window.onclick = function(event) {
+            const modal = document.getElementById('imageModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

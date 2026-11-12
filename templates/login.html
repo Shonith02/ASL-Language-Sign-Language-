@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ASL Detection System</title>
+    <style>
+        :root {
+            --primary: #1b4332;
+            --secondary: #2d6a4f;
+            --accent: #40916c;
+            --light-accent: #52b788;
+            --highlight: #74c69d;
+            --background: #081c15;
+            --card: #0d2818;
+            --text: #d8f3dc;
+            --border-radius: 16px;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #081c15 0%, #1b4332 50%, #092215 100%);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .page-container {
+            display: flex;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: var(--shadow);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .info-section {
+            background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);
+            padding: 40px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2374c69d' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+
+        .organization-logo {
+            width: 80px;
+            height: 80px;
+            background: var(--highlight);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+            border: 2px solid white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .organization-logo span {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .organization-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tagline {
+            text-align: center;
+            margin-bottom: 25px;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+
+        .organization-description {
+            margin-bottom: 30px;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        .features {
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .feature-icon {
+            margin-right: 15px;
+            width: 30px;
+            height: 30px;
+            background: rgba(116, 198, 157, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .login-section {
+            background: linear-gradient(135deg, #0d2818 0%, #14342a 100%);
+            padding: 40px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-left: 1px solid #2d6a4f;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #74c69d 0%, #95d5b2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .login-subtext {
+            margin-top: 8px;
+            color: var(--light-accent);
+            font-size: 0.95rem;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 17px;
+            color: var(--accent);
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 14px 14px 14px 40px;
+            border-radius: 12px;
+            border: 1px solid var(--accent);
+            background-color: rgba(11, 35, 25, 0.8);
+            color: var(--text);
+            font-size: 1rem;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]::placeholder, input[type="password"]::placeholder {
+            color: #52b788;
+            opacity: 0.7;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: var(--highlight);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2), 0 0 8px rgba(82, 183, 136, 0.5);
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .remember-me input {
+            margin-right: 8px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
+            color: white;
+            padding: 14px 30px;
+            border: 1px solid #52b788;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25), 0 0 10px rgba(82, 183, 136, 0.3);
+        }
+
+        .additional-links {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .additional-links a {
+            color: var(--highlight);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        .additional-links a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .error {
+            color: #ff7b7b;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            background-color: rgba(255, 0, 0, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid #ff5252;
+        }
+
+        @media (max-width: 768px) {
+            .page-container {
+                flex-direction: column;
+            }
+            
+            .info-section {
+                padding: 30px;
+            }
+            
+            .login-section {
+                border-left: none;
+                border-top: 1px solid #2d6a4f;
+            }
+            
+            .organization-logo {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .organization-logo span {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="info-section">
+            <div class="organization-logo">
+                <span>👋</span>
+            </div>
+            <h1 class="organization-name">ASL Detection System</h1>
+            <p class="tagline">Breaking barriers through technology</p>
+            <p class="organization-description">Our advanced American Sign Language detection system helps bridge communication gaps using machine learning and computer vision. Our mission is to make ASL more accessible for everyone.</p>
+            
+            <div class="features">
+                <div class="feature-item">
+                    <div class="feature-icon">🎯</div>
+                    <div>Real-time ASL detection with high accuracy</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🏫</div>
+                    <div>Interactive learning and practice tools</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🔄</div>
+                    <div>Switch between letter and phrase detection modes</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="login-section">
+            <div class="login-header">
+                <h2>Welcome Back</h2>
+                <p class="login-subtext">Please sign in to your account</p>
+            </div>
+            
+            <form action="/login" method="post">
+                {% if error %}
+                    <div class="error">{{ error }}</div>
+                {% endif %}
+                
+                <div class="input-group">
+                    <i>👤</i>
+                    <input type="text" name="username" placeholder="Username" required>
+                </div>
+                
+                <div class="input-group">
+                    <i>🔒</i>
+                    <input type="password" name="password" placeholder="Password" required>
+                </div>
+                
+                <div class="remember-me">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">Remember me</label>
+                </div>
+                
+                <button type="submit">Sign In</button>
+                
+                <div class="additional-links">
+                    <a href="/forgot-password">Forgot Password?</a> | 
+                    <a href="/register">Create Account</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
